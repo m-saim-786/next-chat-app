@@ -8,7 +8,7 @@ const Sidebar = () => {
   const { handleLogout } = useAuth();
 
   return (
-    <Card className="h-full w-20 flex flex-col justify-between py-5">
+    <Card className="h-full w-20 flex flex-col justify-between py-5 rounded-none">
       <div className="flex flex-col gap-3">
         <Button variant={"ghost"}>
           <Link href="/">Home</Link>

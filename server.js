@@ -20,18 +20,28 @@ app.prepare().then(() => {
     console.log(`A client connected. ID: ${clientId}`);
     io.emit("client-new", clientId);
 
-    socket.join("my-room");
+    // socket.join("my-room");
 
     // Event handler for receiving messages from the client
     socket.on("message", (data) => {
       console.log("Received message:", data);
-      socket.to("my-room").emit("send-message", data);
+      socket.to(`room-${data.roomId}`).emit("send-message", data.message);
     });
 
     // Event handler for client disconnections
     socket.on("disconnect", () => {
       console.log("A client disconnected.");
     });
+
+    socket.on("join-room", (roomId) => {
+      console.log("joining room", roomId);
+      socket.join(`room-${roomId}`);
+    })
+
+    socket.on("leave-room", (roomId) => {
+      console.log("leaving room", roomId);
+      socket.leave(`room-${roomId}`);
+    })
   });
 
   httpServer
