@@ -42,6 +42,14 @@ app.prepare().then(() => {
       console.log("leaving room", roomId);
       socket.leave(`room-${roomId}`);
     })
+
+    socket.on("typing-started", (data) => {
+      socket.to(`room-${data.roomId}`).emit("typing-started", data);
+    })
+
+    socket.on("typing-stopped", (data) => {
+      socket.to(`room-${data.roomId}`).emit("typing-stopped", data);
+    })
   });
 
   httpServer
