@@ -1,18 +1,32 @@
 "use client";
-import React, { createContext, useContext } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import React, { createContext, useContext, useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+
+type MessageType = {
+  message: string;
+  username: string;
+  createdAt: Date;
+};
 
 type MessageProps = {
   align: "left" | "right";
-  message: string;
+  message: MessageType;
   secondary?: boolean;
-  username: string;
+  showTime?: boolean;
   children: React.ReactNode;
 };
 
 const MessageContext = createContext<Omit<MessageProps, "children">>({
-  message: "",
-  username: "",
+  message: {
+    message: "",
+    username: "",
+    createdAt: new Date(),
+  },
   secondary: false,
   align: "left",
 });
@@ -25,15 +39,25 @@ const useMessage = () => {
   return context;
 };
 
+const Timestamp = () => {
+  const { message } = useMessage();
+
+  return (
+    <p className="text-xs text-slate-500">
+      {message.createdAt.toLocaleTimeString()}
+    </p>
+  );
+};
+
 export const Username = () => {
-  const { username } = useMessage();
+  const { message } = useMessage();
   return (
     <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger>{username[0].toUpperCase()}</TooltipTrigger>
+          <TooltipTrigger>{message.username[0].toUpperCase()}</TooltipTrigger>
           <TooltipContent>
-            <p>{username}</p>
+            <p>{message.username}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -49,7 +73,7 @@ export const MessageContent = () => {
         secondary ? "bg-slate-100" : "bg-primary text-white"
       }`}
     >
-      {message}
+      {message.message}
     </div>
   );
 };
@@ -57,18 +81,26 @@ export const MessageContent = () => {
 const Message = ({
   align = "left",
   message,
-  username,
   secondary = false,
   children,
+  showTime = true,
 }: MessageProps) => {
+  const [isClicked, setIsClicked] = useState(false);
+
   return (
-    <MessageContext.Provider value={{ username, message, secondary, align }}>
+    <MessageContext.Provider
+      value={{ message, secondary, align, showTime }}
+    >
       <div
-        className={`m-2 flex gap-2 w-fit items-center justify-center ${
+        onClick={() => setIsClicked((prev) => !prev)}
+        className={`m-2 flex gap-2 justify-center items-center w-fit ${
           align === "left" ? "mr-auto" : "ml-auto"
         }`}
       >
         {children}
+      </div>
+      <div className={`${ align === "left" ? "text-left ml-12" : "text-right mr-12" }`}>
+        {showTime && isClicked && <Timestamp />}
       </div>
     </MessageContext.Provider>
   );

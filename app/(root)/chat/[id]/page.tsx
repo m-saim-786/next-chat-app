@@ -1,3 +1,4 @@
+import { MAX_MESSAGE_LIMIT } from "@/app/api/conversations/[id]/messages/route";
 import Chat from "@/components/chat/Chat";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -9,14 +10,6 @@ const page = async ({ params }: { params: { id: string } }) => {
   const conversation = await prisma.conversation.findFirst({
     where: { id: +id },
     include: {
-      messages: {
-        select: {
-          id: true,
-          text: true,
-          created_at: true,
-          user: { select: { name: true } },
-        },
-      },
       users: { select: { user: true } },
     },
   });
@@ -25,7 +18,21 @@ const page = async ({ params }: { params: { id: string } }) => {
     redirect("/");
   }
 
-  const messages = conversation.messages.map((message) => ({
+  const messageCount = await prisma.message.count({
+    where: { conversation_id: +id },
+  })
+
+  const messageRecords = await prisma.message.findMany({
+    where: { conversation_id: +id },
+    include: {
+      user: { select: { name: true } },
+    },
+    orderBy: { created_at: "asc" },
+    take: MAX_MESSAGE_LIMIT,
+    skip: Math.max(messageCount - MAX_MESSAGE_LIMIT, 0),
+  });
+
+  const messages = messageRecords.map((message) => ({
     id: message.id,
     username: message.user.name,
     message: message.text,

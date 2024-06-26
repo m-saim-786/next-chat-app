@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { socket } from "@/socket";
+import { NextRequest } from "next/server";
+
+export const MAX_MESSAGE_LIMIT = 100;
 
 export const POST = async (
   request: Request,
@@ -18,17 +20,31 @@ export const POST = async (
     return new Response("Invalid request", { status: 400 });
   }
 
-  const conversation = await prisma.conversation.update({
-    where: { id: +id },
+  const newMessage = await prisma.message.create({
     data: {
-      messages: {
-        create: {
-          text: message,
-          user_id: userId,
-        },
-      },
+      text: message,
+      user_id: userId,
+      conversation_id: +id,
     },
   });
 
-  return Response.json(conversation);
+  return Response.json(newMessage);
+};
+
+export const GET = async (
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) => {
+  const { id } = params;
+  const page = +(request.nextUrl.searchParams.get("page") || 1);
+  const messages = await prisma.message.findMany({
+    where: {
+      conversation_id: +id,
+    },
+    orderBy: { id: "desc" },
+    take: MAX_MESSAGE_LIMIT,
+    skip: page * MAX_MESSAGE_LIMIT,
+  });
+
+  return Response.json(messages);
 };

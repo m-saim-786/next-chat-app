@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 
 import { socket } from "../../socket";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,12 @@ import { useToast } from "@/components/ui/use-toast";
 import Message, { MessageContent, Username } from "@/components/chat/message";
 import InputForm from "@/components/chat/InputForm";
 import { useAuth } from "@/hooks/useAuth";
+import { Message as MessageSchema } from "@prisma/client";
 
 type MessageData = {
   username: string;
   message: string;
+  createdAt: Date;
 };
 
 type ChatProps = {
@@ -26,34 +28,40 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
 
   const messageSound = new Audio("/message.mp3");
 
+  const messagesRef = useRef<HTMLDivElement>(null);
+
   const [message, setMessage] = useState("");
 
   const { toast } = useToast();
 
   const onConnect = () => {
     socket.emit("join-room", roomId);
-    console.log("Connected to the server");
   };
 
   const onDisconnect = () => {
     socket.emit("leave-room", roomId);
-    console.log("Disconnected from the server");
   };
 
   const onSendMessage = (messageData: MessageData) => {
-    setMessageList((prev) => [...prev, { ...messageData }]);
+    setMessageList((prev) => [
+      ...prev,
+      { ...messageData, createdAt: new Date(messageData.createdAt) },
+    ]);
     messageSound.play();
     toast({
       title: `New Message from ${messageData.username}`,
       description: messageData.message,
     });
-  };
 
+    scrollToBottom();
+  };
 
   useEffect(() => {
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("send-message", onSendMessage);
+
+    scrollToBottom();
 
     return () => {
       socket.off("connect", onConnect);
@@ -78,34 +86,51 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
     }
   };
 
-  const  handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const messageData = {
+    const data = {
       message,
-      username: user?.name || '',
+      username: user?.name || "",
     };
 
     setMessage("");
-    await sendMessage(messageData);
+    const newMessage: MessageSchema = await sendMessage(data);
+    const { created_at, text } = newMessage;
+
+    const messageData = {
+      createdAt: new Date(created_at),
+      message: text,
+      username: user?.name || "",
+    };
+
     socket.emit("message", { roomId, message: messageData });
 
     setMessageList((prev) => [...prev, { ...messageData }]);
-  }
+
+    scrollToBottom();
+  };
+
+  const scrollToBottom = () => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTo({
+        top: messagesRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col h-full w-full">
       <header className="p-4 bg-slate-100 justify-between flex">
         <h1>{titles.find((title) => title.id !== user?.id)?.title}</h1>
-        {/* <Button onClick={() => setMessages([])}>Clear chat</Button> */}
       </header>
 
-      <div className="flex-grow overflow-y-auto p-5">
+      <div className="flex-grow overflow-y-auto p-5" ref={messagesRef}>
         {messageList.map((message, index) => (
           <Message
             key={index}
-            message={message.message}
-            username={message.username}
+            message={message}
             align={user?.name === message.username ? "right" : "left"}
             secondary={user?.name !== message.username}
           >
