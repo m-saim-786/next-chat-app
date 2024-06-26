@@ -19,7 +19,7 @@ const InputForm = ({
       <div className="flex w-full items-center space-x-2">
         <Input
           name="message"
-          placeholder="enter your message"
+          placeholder="Enter your message"
           value={message}
           onChange={onChange}
           autoComplete={"off"}

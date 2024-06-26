@@ -1,14 +1,14 @@
 "use client";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { socket } from "../../socket";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import Message, { MessageContent, Username } from "@/components/chat/message";
-import InputForm from "@/components/chat/InputForm";
 import { useAuth } from "@/hooks/useAuth";
+import { socket } from "@/socket";
 import { Message as MessageSchema } from "@prisma/client";
+
+import Message, { MessageContent, Username } from "@/components/chat/message";
+import TypingIndicator from "@/components/ui/typingIndicator";
+import { useToast } from "@/components/ui/use-toast";
+import InputForm from "@/components/chat/InputForm";
 
 type MessageData = {
   username: string;
@@ -31,6 +31,7 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
   const messagesRef = useRef<HTMLDivElement>(null);
 
   const [message, setMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   const { toast } = useToast();
 
@@ -56,10 +57,15 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
     scrollToBottom();
   };
 
+  const onTypingStarted = () => setIsTyping(true);
+  const onTypingStopped = () => setIsTyping(false);
+
   useEffect(() => {
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("send-message", onSendMessage);
+    socket.on("typing-started", onTypingStarted);
+    socket.on("typing-stopped", onTypingStopped);
 
     scrollToBottom();
 
@@ -67,6 +73,8 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("send-message", onSendMessage);
+      socket.off("typing-started", onTypingStarted);
+      socket.off("typing-stopped", onTypingStopped);
     };
   }, []);
 
@@ -120,6 +128,21 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
     }
   };
 
+  let typingTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+
+    setMessage(e.target.value);
+    socket.emit("typing-started", { roomId, username: user?.name || "" });
+
+    typingTimeout = setTimeout(() => {
+      socket.emit("typing-stopped", { roomId, username: user?.name || "" });
+    }, 3000);
+  };
+
   return (
     <div className="flex flex-col h-full w-full">
       <header className="p-4 bg-slate-100 justify-between flex">
@@ -141,14 +164,13 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
         ))}
       </div>
 
-      <div className="p-4">
-        <div className="mt-5">
-          <InputForm
-            handleSubmit={handleSubmit}
-            message={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-        </div>
+      <div className="mt-5 p-4">
+        {isTyping && <span className="flex gap-1 items-end text-gray-500 text-xs ml-1 mb-1">Typing<TypingIndicator className="bg-gray-500"/></span>}
+        <InputForm
+          handleSubmit={handleSubmit}
+          message={message}
+          onChange={handleChange}
+        />
       </div>
     </div>
   );
