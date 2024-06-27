@@ -6,7 +6,7 @@ import { socket } from "@/socket";
 import { Message as MessageSchema } from "@prisma/client";
 
 import Message, { MessageContent, Username } from "@/components/chat/message";
-import TypingIndicator from "@/components/ui/typingIndicator";
+import TypingIndicator from "@/components/chat/TypingIndicator";
 import { useToast } from "@/components/ui/use-toast";
 import InputForm from "@/components/chat/InputForm";
 
@@ -25,23 +25,18 @@ type ChatProps = {
 const Chat = ({ messages, titles, roomId }: ChatProps) => {
   const [messageList, setMessageList] = useState<MessageData[]>(messages);
   const { user } = useAuth();
-
+  const { toast } = useToast();
+  
   const messageSound = new Audio("/message.mp3");
-
   const messagesRef = useRef<HTMLDivElement>(null);
-
+  
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
-  const { toast } = useToast();
-
-  const onConnect = () => {
-    socket.emit("join-room", roomId);
-  };
-
-  const onDisconnect = () => {
-    socket.emit("leave-room", roomId);
-  };
+  const onConnect = () => socket.emit("join-room", roomId)
+  const onDisconnect = () => socket.emit("leave-room", roomId)
+  const onTypingStarted = () => setIsTyping(true);
+  const onTypingStopped = () => setIsTyping(false);
 
   const onSendMessage = (messageData: MessageData) => {
     setMessageList((prev) => [
@@ -56,9 +51,6 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
 
     scrollToBottom();
   };
-
-  const onTypingStarted = () => setIsTyping(true);
-  const onTypingStopped = () => setIsTyping(false);
 
   useEffect(() => {
     socket.on("connect", onConnect);
@@ -77,6 +69,14 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
       socket.off("typing-stopped", onTypingStopped);
     };
   }, []);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      socket.emit("typing-stopped", { roomId, username: user?.name || "" });
+    }, 3000)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [message])
 
   const sendMessage = async ({ message }: { message: string }) => {
     const data = {
@@ -113,9 +113,7 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
     };
 
     socket.emit("message", { roomId, message: messageData });
-
     setMessageList((prev) => [...prev, { ...messageData }]);
-
     scrollToBottom();
   };
 
@@ -128,19 +126,9 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
     }
   };
 
-  let typingTimeout: ReturnType<typeof setTimeout> | null = null;
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (typingTimeout) {
-      clearTimeout(typingTimeout);
-    }
-
     setMessage(e.target.value);
     socket.emit("typing-started", { roomId, username: user?.name || "" });
-
-    typingTimeout = setTimeout(() => {
-      socket.emit("typing-stopped", { roomId, username: user?.name || "" });
-    }, 3000);
   };
 
   return (
@@ -165,7 +153,7 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
       </div>
 
       <div className="mt-5 p-4">
-        {isTyping && <span className="flex gap-1 items-end text-gray-500 text-xs ml-1 mb-1">Typing<TypingIndicator className="bg-gray-500"/></span>}
+        {isTyping && <TypingIndicator />}
         <InputForm
           handleSubmit={handleSubmit}
           message={message}
