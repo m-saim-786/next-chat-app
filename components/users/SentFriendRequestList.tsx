@@ -1,7 +1,7 @@
-"use client"
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '@/hooks/useAuth';
-import { User } from '@prisma/client';
+import { useAuth } from '@/hooks/useAuth'
+import { User } from '@prisma/client'
 
 type Friendship = {
   id: number;
@@ -13,24 +13,24 @@ type Friendship = {
 };
 
 const SentFriendRequestList = () => {
-  const [sentFriendRequests, setSentFriendRequests] = useState<Friendship[]>([]);
-  const { user: loggedInUser } = useAuth();
+  const [sentFriendRequests, setSentFriendRequests] = useState<Friendship[]>([])
+  const { user: loggedInUser } = useAuth()
 
   useEffect(() => {
     if (loggedInUser) {
-      fetchSentFriends(loggedInUser.id);
+      fetchSentFriends(loggedInUser.id)
     }
-  }, [loggedInUser]);
+  }, [loggedInUser])
 
   const fetchSentFriends = async (userId: number) => {
     try {
-      const response = await fetch(`/api/users/${userId}/friend-requests/sent`);
-      const parsedResponse = await response.json();
-      setSentFriendRequests(parsedResponse.data);
+      const response = await fetch(`/api/users/${userId}/friend-requests/sent`)
+      const parsedResponse = await response.json()
+      setSentFriendRequests(parsedResponse.data)
     } catch (error) {
-      console.error('Error fetching pending friends:', error);
+      console.error('Error fetching pending friends:', error)
     }
-  };
+  }
 
   if(sentFriendRequests.length === 0) {
     return (

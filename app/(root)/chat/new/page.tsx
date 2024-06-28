@@ -1,4 +1,4 @@
-import FriendsList from "@/components/users/FriendsList"
+import FriendsList from '@/components/users/FriendsList'
 
 const Users = async () => {
   return <FriendsList />

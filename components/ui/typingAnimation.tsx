@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 type TypingAnimationProps = {
   className?: string;
@@ -9,9 +9,9 @@ type TypingAnimationProps = {
 
 const TypingAnimation = ({ className, animationDuration = '1.5s'}: TypingAnimationProps) => {
   // Calculate animation delays based on animationDuration prop
-  const delay1 = `${parseInt(animationDuration) * 0.2}s`;
-  const delay2 = `${parseInt(animationDuration) * 0.3}s`;
-  const delay3 = `${parseInt(animationDuration) * 0.4}s`;
+  const delay1 = `${parseInt(animationDuration) * 0.2}s`
+  const delay2 = `${parseInt(animationDuration) * 0.3}s`
+  const delay3 = `${parseInt(animationDuration) * 0.4}s`
 
   return (
     <div className="flex items-center h-3">
@@ -46,14 +46,14 @@ const TypingAnimation = ({ className, animationDuration = '1.5s'}: TypingAnimati
         `}
       </style>
       <div className="flex items-center space-x-0.5">
-        <div className={cn("bg-black rounded-sm w-1 h-1 animate-typing1", className)}></div>
-        <div className={cn("bg-black rounded-sm w-1 h-1 animate-typing2", className)}></div>
-        <div className={cn("bg-black rounded-sm w-1 h-1 animate-typing3", className)}></div>
+        <div className={cn('bg-black rounded-sm w-1 h-1 animate-typing1', className)}></div>
+        <div className={cn('bg-black rounded-sm w-1 h-1 animate-typing2', className)}></div>
+        <div className={cn('bg-black rounded-sm w-1 h-1 animate-typing3', className)}></div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TypingAnimation;
+export default TypingAnimation
 
 

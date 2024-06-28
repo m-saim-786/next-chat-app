@@ -1,7 +1,7 @@
-"use client"
-import React from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+'use client'
+import React from 'react'
+import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 
 type InputProps = {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -22,13 +22,13 @@ const InputForm = ({
           placeholder="Enter your message"
           value={message}
           onChange={onChange}
-          autoComplete={"off"}
+          autoComplete={'off'}
           required
         />
         <Button type="submit">Send</Button>
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default InputForm;
+export default InputForm

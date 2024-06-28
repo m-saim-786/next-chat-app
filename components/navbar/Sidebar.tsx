@@ -1,31 +1,31 @@
-import React from "react";
-import { Card, CardFooter } from "../ui/card";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
+import React from 'react'
+import { Card } from '../ui/card'
+import { Button } from '../ui/button'
+import Link from 'next/link'
+import { useAuth } from '@/hooks/useAuth'
 
 const Sidebar = () => {
-  const { handleLogout } = useAuth();
+  const { handleLogout } = useAuth()
 
   return (
     <Card className="h-full w-20 flex flex-col justify-between py-5 rounded-none">
       <div className="flex flex-col gap-3">
-        <Button variant={"ghost"}>
+        <Button variant={'ghost'}>
           <Link href="/">Home</Link>
         </Button>
-        <Button variant={"ghost"}>
+        <Button variant={'ghost'}>
           <Link href="/chat">Chat</Link>
         </Button>
-        <Button variant={"ghost"}>
+        <Button variant={'ghost'}>
           <Link href="/users">Users</Link>
         </Button>
       </div>
 
-      <Button variant={"ghost"} onClick={handleLogout}>
+      <Button variant={'ghost'} onClick={handleLogout}>
         Log out
       </Button>
     </Card>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

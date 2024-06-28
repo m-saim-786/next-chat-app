@@ -1,7 +1,7 @@
-"use client"
+'use client'
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '@/hooks/useAuth';
-import { User } from '@prisma/client';
+import { useAuth } from '@/hooks/useAuth'
+import { User } from '@prisma/client'
 
 type Friendship = {
   id: number;
@@ -13,46 +13,46 @@ type Friendship = {
 };
 
 const RecievedFriendRequestList = () => {
-  const [receivedRequests, setReceivedRequests] = useState<Friendship[]>([]);
-  const { user: loggedInUser } = useAuth();
+  const [receivedRequests, setReceivedRequests] = useState<Friendship[]>([])
+  const { user: loggedInUser } = useAuth()
 
   useEffect(() => {
     if (loggedInUser) {
-      fetchReceivedRequests(loggedInUser.id);
+      fetchReceivedRequests(loggedInUser.id)
     }
-  }, [loggedInUser]);
+  }, [loggedInUser])
 
   const fetchReceivedRequests = async (userId: number) => {
     try {
-      const response = await fetch(`/api/users/${userId}/friend-requests/recieved`);
-      const parsedResponse = await response.json();
-      setReceivedRequests(parsedResponse.data);
+      const response = await fetch(`/api/users/${userId}/friend-requests/recieved`)
+      const parsedResponse = await response.json()
+      setReceivedRequests(parsedResponse.data)
     } catch (error) {
-      console.error('Error fetching received requests:', error);
+      console.error('Error fetching received requests:', error)
     }
-  };
+  }
 
   const handleAcceptRequest = async (requestId: number) => {
     try {
       const response = await fetch(`/api/users/${loggedInUser?.id}/friend-requests/${requestId}/accept`, {
         method: 'GET',
-      });
-      const data = await response.json();
-      console.log(data);
+      })
+      const data = await response.json()
+      console.log(data)
     } catch (error) {
-      console.error('Error accepting friend request:', error);
+      console.error('Error accepting friend request:', error)
     }
-  };
+  }
 
   const handleDeclineRequest = async (requestId: number) => {
     try {
       const response = await fetch(`/api/users/${loggedInUser?.id}/friend-requests/${requestId}/decline`, {
         method: 'GET',
-      });
-      const data = await response.json();
-      console.log(data);
+      })
+      const data = await response.json()
+      console.log(data)
     } catch (error) {
-      console.error('Error declining friend request:', error);
+      console.error('Error declining friend request:', error)
     }
   }
 

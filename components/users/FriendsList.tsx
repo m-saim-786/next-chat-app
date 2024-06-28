@@ -1,53 +1,53 @@
-"use client"
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { User } from '@prisma/client';
-import { useRouter } from 'next/navigation';
-import { toast } from '../ui/use-toast';
+'use client'
+import React, { useEffect, useState } from 'react'
+import { useAuth } from '@/hooks/useAuth'
+import { User } from '@prisma/client'
+import { useRouter } from 'next/navigation'
+import { toast } from '../ui/use-toast'
 
 const FriendsList = () => {
   const router = useRouter()
-  const { user: loggedInUser } = useAuth();
-  const [friends, setFriends] = useState<User[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const { user: loggedInUser } = useAuth()
+  const [friends, setFriends] = useState<User[]>([])
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
   useEffect(() => {
     if (loggedInUser) {
-      fetchFriends(loggedInUser.id);
+      fetchFriends(loggedInUser.id)
     }
-  }, [loggedInUser]);
+  }, [loggedInUser])
 
   const fetchFriends = async (userId: number) => {
     try {
-      const response = await fetch(`/api/users/${userId}/friends`);
-      const parsedResponse = await response.json();
-      setFriends(parsedResponse.data);
+      const response = await fetch(`/api/users/${userId}/friends`)
+      const parsedResponse = await response.json()
+      setFriends(parsedResponse.data)
     } catch (error) {
-      console.error('Error fetching non-friends:', error);
+      console.error('Error fetching non-friends:', error)
     }
-  };
+  }
 
   const filteredFriends = friends.filter(user =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  )
 
   const handleNewConversation = async (id: number) => {
     try {
-      const conversation = await fetch("/api/conversations", {
-        method: "POST",
+      const conversation = await fetch('/api/conversations', {
+        method: 'POST',
         body: JSON.stringify({ userId: loggedInUser?.id, otherUserId: id }),
-      }).then((res) => res.json());
-      router.push(`/chat/${conversation.id}`);
+      }).then((res) => res.json())
+      router.push(`/chat/${conversation.id}`)
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Something went wrong.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Something went wrong.',
+        variant: 'destructive',
       })
-      router.push(`/chat`);
-      console.error(error);
+      router.push('/chat')
+      console.error(error)
     }
-  };
+  }
 
   return (
     <div className="w-2/3 p-4">

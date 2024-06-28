@@ -1,6 +1,6 @@
-import NonFriendsList from "@/components/users/NonFriendsList"
-import RecievedFriendRequestList from "@/components/users/RecievedFriendRequestList"
-import SentFriendRequestList from "@/components/users/SentFriendRequestList"
+import NonFriendsList from '@/components/users/NonFriendsList'
+import RecievedFriendRequestList from '@/components/users/RecievedFriendRequestList'
+import SentFriendRequestList from '@/components/users/SentFriendRequestList'
 
 const Users = async () => {
   return (
