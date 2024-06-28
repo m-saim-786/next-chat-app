@@ -2,15 +2,12 @@ import React from 'react';
 
 import { cn } from "@/lib/utils"
 
-interface TypingIndicationProps {
+type TypingAnimationProps = {
   className?: string;
   animationDuration?: string;
 }
 
-const TypingIndication: React.FC<TypingIndicationProps> = ({
-  className,
-  animationDuration = '1.5s',
-}) => {
+const TypingAnimation = ({ className, animationDuration = '1.5s'}: TypingAnimationProps) => {
   // Calculate animation delays based on animationDuration prop
   const delay1 = `${parseInt(animationDuration) * 0.2}s`;
   const delay2 = `${parseInt(animationDuration) * 0.3}s`;
@@ -57,6 +54,6 @@ const TypingIndication: React.FC<TypingIndicationProps> = ({
   );
 };
 
-export default TypingIndication;
+export default TypingAnimation;
 
 
