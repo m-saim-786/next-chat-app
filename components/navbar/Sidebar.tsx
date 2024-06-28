@@ -16,6 +16,9 @@ const Sidebar = () => {
         <Button variant={"ghost"}>
           <Link href="/chat">Chat</Link>
         </Button>
+        <Button variant={"ghost"}>
+          <Link href="/users">Users</Link>
+        </Button>
       </div>
 
       <Button variant={"ghost"} onClick={handleLogout}>
