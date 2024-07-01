@@ -42,12 +42,12 @@ const RecievedFriendRequestList = () => {
     }
   }
 
-  const handleDeclineRequest = async (requestId: number) => {
+  const handleDeclineRequest = async (request: FriendshipProps) => {
     try {
-      await fetch(`/api/users/${loggedInUser?.id}/friend-requests/${requestId}/decline`, {
+      await fetch(`/api/users/${loggedInUser?.id}/friend-requests/${request.id}/decline`, {
         method: 'GET',
       })
-      declineFriendRequest(requestId)
+      declineFriendRequest(request)
       toast({
         title: 'Success',
         description: 'Friend request declined successfully.',
@@ -76,7 +76,7 @@ const RecievedFriendRequestList = () => {
             <span>{request.user.name}</span>
             <div className="flex justify-end">
               <button className="bg-success text-white px-4 py-2 rounded mx-2" onClick={() => handleAcceptRequest(request.id)}>Accept</button>
-              <button className="bg-danger text-white px-4 py-2 rounded mx-2" onClick={() => handleDeclineRequest(request.id)}>Decline</button>
+              <button className="bg-danger text-white px-4 py-2 rounded mx-2" onClick={() => handleDeclineRequest(request)}>Decline</button>
             </div>
           </div>
         ))}
