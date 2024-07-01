@@ -24,6 +24,11 @@ const NonFriendsList = () => {
       setNonFriends(parsedResponse.data)
     } catch (error) {
       console.error('Error fetching non-friends:', error)
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while fetching non-friends.',
+        variant: 'destructive'
+      })
     }
   }
 
@@ -48,6 +53,11 @@ const NonFriendsList = () => {
       })
     } catch (error) {
       console.error('Error sending friend request:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to send friend request.',
+        variant: 'destructive'
+      })
     }
   }
 

@@ -23,6 +23,11 @@ const SentFriendRequestList = () => {
       setSentRequests(parsedResponse.data)
     } catch (error) {
       console.error('Error fetching pending friends:', error)
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while fetching pending friend requests.',
+        variant: 'destructive'
+      })
     }
   }
 
@@ -39,6 +44,11 @@ const SentFriendRequestList = () => {
       })
     } catch (error) {
       console.error('Error declining friend request:', error)
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while cancelling friend request.',
+        variant: 'destructive'
+      })
     }
   }
 

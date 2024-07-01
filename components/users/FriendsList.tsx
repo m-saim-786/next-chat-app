@@ -24,6 +24,11 @@ const FriendsList = () => {
       setFriends(parsedResponse.data)
     } catch (error) {
       console.error('Error fetching non-friends:', error)
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while fetching friends.',
+        variant: 'destructive'
+      })
     }
   }
 

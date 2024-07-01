@@ -22,6 +22,11 @@ const RecievedFriendRequestList = () => {
       setReceivedRequests(parsedResponse.data)
     } catch (error) {
       console.error('Error fetching received requests:', error)
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while fetching received requests.',
+        variant: 'destructive'
+      })
     }
   }
 
@@ -39,6 +44,11 @@ const RecievedFriendRequestList = () => {
       })
     } catch (error) {
       console.error('Error accepting friend request:', error)
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while accepting friend request.',
+        variant: 'destructive'
+      })
     }
   }
 
@@ -55,6 +65,11 @@ const RecievedFriendRequestList = () => {
       })
     } catch (error) {
       console.error('Error declining friend request:', error)
+      toast({
+        title: 'Error',
+        description: 'Something went wrong while declining friend request.',
+        variant: 'destructive'
+      })
     }
   }
 
