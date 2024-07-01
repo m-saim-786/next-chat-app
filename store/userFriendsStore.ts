@@ -15,6 +15,7 @@ type UserFriendsState = {
   sendFriendRequest: (friendShip: FriendshipProps) => void
   acceptFriendRequest: (friendShip: FriendshipProps) => void
   declineFriendRequest: (friendRequest: FriendshipProps) => void
+  cancelFriendRequest: (friendRequest: FriendshipProps) => void
 }
 
 const useFriends = create<UserFriendsState>((set) => ({
@@ -38,6 +39,10 @@ const useFriends = create<UserFriendsState>((set) => ({
   declineFriendRequest: (friendRequest: FriendshipProps) => set((state) => ({
     receivedRequests: state.receivedRequests.filter((request) => request.id !== friendRequest.id),
     nonFriends: [...state.nonFriends, {...friendRequest.user}],
+  })),
+  cancelFriendRequest: (friendRequest: FriendshipProps) => set((state) => ({
+    sentRequests: state.sentRequests.filter((request) => request.id !== friendRequest.id),
+    nonFriends: [...state.nonFriends, {...friendRequest.friend}],
   })),
 }))
 
