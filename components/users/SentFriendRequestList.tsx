@@ -35,7 +35,7 @@ const SentFriendRequestList = () => {
       toast({
         title: 'Success',
         description: 'Friend request cancelled successfully.',
-        variant: 'default'
+        variant: 'destructive'
       })
     } catch (error) {
       console.error('Error declining friend request:', error)

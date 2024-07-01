@@ -44,7 +44,7 @@ const NonFriendsList = () => {
       toast({
         title: 'Success',
         description: 'Friend request sent successfully.',
-        variant: 'default'
+        variant: 'success'
       })
     } catch (error) {
       console.error('Error sending friend request:', error)

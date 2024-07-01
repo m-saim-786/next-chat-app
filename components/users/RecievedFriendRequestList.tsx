@@ -35,7 +35,7 @@ const RecievedFriendRequestList = () => {
       toast({
         title: 'Success',
         description: 'Friend request accepted successfully.',
-        variant: 'default'
+        variant: 'success'
       })
     } catch (error) {
       console.error('Error accepting friend request:', error)
@@ -51,7 +51,7 @@ const RecievedFriendRequestList = () => {
       toast({
         title: 'Success',
         description: 'Friend request declined successfully.',
-        variant: 'default'
+        variant: 'destructive'
       })
     } catch (error) {
       console.error('Error declining friend request:', error)
