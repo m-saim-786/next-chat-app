@@ -2,18 +2,11 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { User } from '@prisma/client'
+import useFriends from '@/store/userFriendsStore'
 
-type Friendship = {
-  id: number;
-  user_id: number;
-  friend_id: number;
-  status: string;
-  user: User;
-  friend: User;
-};
 
 const SentFriendRequestList = () => {
-  const [sentFriendRequests, setSentFriendRequests] = useState<Friendship[]>([])
+  const { sentRequests, setSentRequests } = useFriends()
   const { user: loggedInUser } = useAuth()
 
   useEffect(() => {
@@ -26,13 +19,13 @@ const SentFriendRequestList = () => {
     try {
       const response = await fetch(`/api/users/${userId}/friend-requests/sent`)
       const parsedResponse = await response.json()
-      setSentFriendRequests(parsedResponse.data)
+      setSentRequests(parsedResponse.data)
     } catch (error) {
       console.error('Error fetching pending friends:', error)
     }
   }
 
-  if(sentFriendRequests.length === 0) {
+  if(sentRequests.length === 0) {
     return (
       <div>
         <h2 className="text-xl font-semibold mb-2">Sent Friend Requests</h2>
@@ -45,7 +38,7 @@ const SentFriendRequestList = () => {
     <div>
       <h2 className="text-xl font-semibold mb-2">Sent Friend Requests</h2>
       <div className="space-y-2">
-        {sentFriendRequests.map((request) => (
+        {sentRequests.map((request) => (
           <div key={request.id} className="bg-gray-200 p-2 rounded flex justify-between items-center">
             <span>{request.friend.name}</span>
             <span className="bg-warning text-white px-4 py-2 rounded mx-2">Pending</span>

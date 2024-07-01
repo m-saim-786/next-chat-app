@@ -1,14 +1,14 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { User } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { toast } from '../ui/use-toast'
+import useFriends from '@/store/userFriendsStore'
 
 const FriendsList = () => {
   const router = useRouter()
+  const { friends, setFriends } = useFriends()
   const { user: loggedInUser } = useAuth()
-  const [friends, setFriends] = useState<User[]>([])
   const [searchQuery, setSearchQuery] = useState<string>('')
 
   useEffect(() => {
@@ -27,9 +27,11 @@ const FriendsList = () => {
     }
   }
 
-  const filteredFriends = friends.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredFriends = useMemo(() => {
+    return friends.filter(user =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [friends, searchQuery])
 
   const handleNewConversation = async (id: number) => {
     try {

@@ -39,8 +39,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       data: {
         user_id,
         friend_id,
-        status: 'pending',
+        status: 'pending'
       },
+      select: { id: true, friend: true }
     })
 
     return NextResponse.json({ data: newFriendship }, { status: 201 })

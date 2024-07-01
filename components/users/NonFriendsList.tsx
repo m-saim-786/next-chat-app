@@ -1,11 +1,14 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import useFriends from '@/store/userFriendsStore'
+import { toast } from '../ui/use-toast'
 import { User } from '@prisma/client'
+import { FriendshipProps } from '@/types/schemaTypes'
 
 const NonFriendsList = () => {
   const { user: loggedInUser } = useAuth()
-  const [nonFriends, setNonFriends] = useState<User[]>([])
+  const { nonFriends, setNonFriends, sendFriendRequest } = useFriends()
   const [searchQuery, setSearchQuery] = useState<string>('')
 
   useEffect(() => {
@@ -24,18 +27,25 @@ const NonFriendsList = () => {
     }
   }
 
-  const filteredNonFriends = nonFriends.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredNonFriends = useMemo(() => {
+    return nonFriends.filter(user =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }, [nonFriends, searchQuery])
 
-  const handleSendRequest = async (friendId: number) => {
+  const handleSendRequest = async (friend: User) => {
     try {
       const response = await fetch(`/api/users/${loggedInUser?.id}/friend-requests`, {
         method: 'POST',
-        body: JSON.stringify({ friend_id: friendId }),
+        body: JSON.stringify({ friend_id: friend.id }),
       })
-      const data = await response.json()
-      console.log(data)
+      const parsedData: { data: FriendshipProps } = await response.json()
+      sendFriendRequest(parsedData.data)
+      toast({
+        title: 'Success',
+        description: 'Friend request sent successfully.',
+        variant: 'default'
+      })
     } catch (error) {
       console.error('Error sending friend request:', error)
     }
@@ -55,7 +65,7 @@ const NonFriendsList = () => {
         {filteredNonFriends.map((user) => (
           <div key={user.id} className="bg-white p-4 rounded shadow-md flex items-center justify-between">
             <span>{user.name}</span>
-            <button className="bg-info text-white px-4 py-2 rounded" onClick={() => handleSendRequest(user.id)}>Send Request</button>
+            <button className="bg-info text-white px-4 py-2 rounded" onClick={() => handleSendRequest(user)}>Send Request</button>
           </div>
         ))}
       </div>

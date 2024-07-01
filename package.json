@@ -23,7 +23,8 @@
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "use-sound": "^4.0.1",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@radix-ui/react-dialog": "^1.1.1",
@@ -45,7 +46,6 @@
     "postcss": "^8.4.38",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^12.1.5",
-    "prettier": "^3.3.2",
     "tailwind-merge": "^2.3.0",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",

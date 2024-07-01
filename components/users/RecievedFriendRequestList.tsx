@@ -1,19 +1,12 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { User } from '@prisma/client'
-
-type Friendship = {
-  id: number;
-  user_id: number;
-  friend_id: number;
-  status: string;
-  user: User;
-  friend: User;
-};
+import useFriends from '@/store/userFriendsStore'
+import { FriendshipProps } from '@/types/schemaTypes'
+import { toast } from '../ui/use-toast'
 
 const RecievedFriendRequestList = () => {
-  const [receivedRequests, setReceivedRequests] = useState<Friendship[]>([])
+  const { receivedRequests, setReceivedRequests, acceptFriendRequest, declineFriendRequest } = useFriends()
   const { user: loggedInUser } = useAuth()
 
   useEffect(() => {
@@ -37,8 +30,13 @@ const RecievedFriendRequestList = () => {
       const response = await fetch(`/api/users/${loggedInUser?.id}/friend-requests/${requestId}/accept`, {
         method: 'GET',
       })
-      const data = await response.json()
-      console.log(data)
+      const parsedData: {data: FriendshipProps} = await response.json()
+      acceptFriendRequest(parsedData.data)
+      toast({
+        title: 'Success',
+        description: 'Friend request accepted successfully.',
+        variant: 'default'
+      })
     } catch (error) {
       console.error('Error accepting friend request:', error)
     }
@@ -46,11 +44,15 @@ const RecievedFriendRequestList = () => {
 
   const handleDeclineRequest = async (requestId: number) => {
     try {
-      const response = await fetch(`/api/users/${loggedInUser?.id}/friend-requests/${requestId}/decline`, {
+      await fetch(`/api/users/${loggedInUser?.id}/friend-requests/${requestId}/decline`, {
         method: 'GET',
       })
-      const data = await response.json()
-      console.log(data)
+      declineFriendRequest(requestId)
+      toast({
+        title: 'Success',
+        description: 'Friend request declined successfully.',
+        variant: 'default'
+      })
     } catch (error) {
       console.error('Error declining friend request:', error)
     }

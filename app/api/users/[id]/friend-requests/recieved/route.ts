@@ -12,7 +12,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   try {
     const receivedFriendRequests = await prisma.friendship.findMany({
       where: { friend_id: userId, status: 'pending' },
-      select: { id: true, user: true },
+      select: { id: true, user: true }
     })
 
     return NextResponse.json({ data: receivedFriendRequests }, { status: 200 })
