@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardHeader } from '../ui/card'
 
 type ConversationProps = {
   onClick: () => void;
@@ -11,7 +11,7 @@ const Conversation = ({ onClick, title }: ConversationProps) => {
         {title}
       </CardHeader>
     </Card>
-  );
-};
+  )
+}
 
-export default Conversation;
+export default Conversation

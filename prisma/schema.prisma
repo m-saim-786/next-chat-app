@@ -20,6 +20,8 @@ model User {
 
   conversations ConversationUser[]
   messages Message[]
+  friends Friendship[] @relation("UserFriends")
+  friendOf Friendship[] @relation("UserFriendOf")
 }
 
 enum ConversationType {
@@ -55,4 +57,25 @@ model Message {
 
   user      User @relation(fields: [user_id], references: [id])
   conversation Conversation @relation(fields: [conversation_id], references: [id])
+}
+
+model Friendship {
+  id            Int      @id @default(autoincrement())
+  created_at    DateTime @default(now())
+  accepted_at   DateTime?
+  user_id       Int
+  friend_id     Int
+  status        FriendshipStatus @default(pending)
+
+  user          User     @relation("UserFriends", fields: [user_id], references: [id])
+  friend        User     @relation("UserFriendOf", fields: [friend_id], references: [id])
+
+  @@unique([user_id, friend_id])
+  @@index([user_id])
+  @@index([friend_id])
+}
+
+enum FriendshipStatus {
+  pending
+  accepted
 }
