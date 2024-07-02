@@ -1,3 +1,52 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "react-hooks"],
+  "rules": {
+    "semi": ["error", "never"],
+    "quotes": ["error", "single"],
+    "indent": ["error", 2],
+    "react/jsx-uses-react": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "globals": {
+    "process": "readonly"
+  },
+  "overrides": [
+    {
+      "files": ["*.{js,jsx}"],
+      "ecmaFeatures": { "modules": false }
+    }
+  ],
+  "ignorePatterns": ["*.config.js"]
 }

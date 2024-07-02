@@ -1,17 +1,17 @@
-"use client"
-import SidebarWrapper from "@/components/navbar/SidebarWrapper";
-import { useAuth } from "@/hooks/useAuth";
-import { redirect } from "next/navigation";
+'use client'
+import SidebarWrapper from '@/components/navbar/SidebarWrapper'
+import { useAuth } from '@/hooks/useAuth'
+import { redirect } from 'next/navigation'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth()
 
   if (!isAuthenticated) {
-    redirect("/signIn");
+    redirect('/signIn')
   }
 
-  return <SidebarWrapper>{children}</SidebarWrapper>;
-};
+  return <SidebarWrapper>{children}</SidebarWrapper>
+}
 
-export default Layout;
+export default Layout
