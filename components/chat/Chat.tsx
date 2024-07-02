@@ -14,15 +14,17 @@ type MessageData = {
   username: string;
   message: string;
   createdAt: Date;
+  actor: string;
 };
 
 type ChatProps = {
   messages: MessageData[];
-  titles: { id: number; title: string }[];
+  users: { id: number; title: string }[];
   roomId: number;
+  conversationName: string | null;
 };
 
-const Chat = ({ messages, titles, roomId }: ChatProps) => {
+const Chat = ({ messages, users, roomId, conversationName }: ChatProps) => {
   const [messageList, setMessageList] = useState<MessageData[]>(messages)
   const { user } = useAuth()
   const { toast } = useToast()
@@ -100,16 +102,18 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
     const data = {
       message,
       username: user?.name || '',
+      actor: 'user',
     }
 
     setMessage('')
     const newMessage: MessageSchema = await sendMessage(data)
-    const { created_at, text } = newMessage
+    const { created_at, text, message_actor_type } = newMessage
 
     const messageData = {
       createdAt: new Date(created_at),
       message: text,
       username: user?.name || '',
+      actor: message_actor_type,
     }
 
     socket.emit('message', { roomId, message: messageData })
@@ -134,7 +138,7 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
   return (
     <div className="flex flex-col h-full w-full">
       <header className="p-4 bg-slate-100 justify-between flex">
-        <h1>{titles.find((title) => title.id !== user?.id)?.title}</h1>
+        <h1>{ conversationName || users.find((u) => u.id !== user?.id)?.title}</h1>
       </header>
 
       <div className="flex-grow overflow-y-auto p-5" ref={messagesRef}>
@@ -142,17 +146,17 @@ const Chat = ({ messages, titles, roomId }: ChatProps) => {
           <Message
             key={index}
             message={message}
-            align={user?.name === message.username ? 'right' : 'left'}
-            secondary={user?.name !== message.username}
+            align={message.actor === 'system' ? 'center' : user?.name === message.username ? 'right' : 'left'}
+            secondary={message.actor === 'system' || user?.name !== message.username}
           >
-            {message.username !== user?.name && <Username />}
+            {message.actor !== 'system' && message.username !== user?.name && <Username />}
             <MessageContent />
-            {message.username === user?.name && <Username />}
+            {message.actor !== 'system' && message.username === user?.name && <Username />}
           </Message>
         ))}
       </div>
 
-      <div className="mt-5 p-4">
+      <div className="p-4 pt-0">
         {isTyping && <TypingIndicator />}
         <InputForm
           handleSubmit={handleSubmit}
