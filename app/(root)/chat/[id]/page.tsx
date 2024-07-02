@@ -37,16 +37,18 @@ const page = async ({ params }: { params: { id: string } }) => {
     username: message.user.name,
     message: message.text,
     createdAt: message.created_at,
+    actor: message.message_actor_type
   }))
 
   return (
     <Chat
       messages={messages}
-      titles={conversation.users.map((user) => ({
+      users={conversation.users.map((user) => ({
         id: user.user.id,
         title: user.user.name,
       }))}
       roomId={conversation.id}
+      conversationName={conversation.name}
     />
   )
 }

@@ -30,9 +30,7 @@ export const POST = async (request: Request) => {
   }
 
   const conversation = await prisma.conversation.create({
-    data: {
-      conversation_type: 'personal',
-    },
+    data: { conversation_type: 'personal' },
   })
 
   await prisma.conversationUser.createMany({
