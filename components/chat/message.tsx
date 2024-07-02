@@ -11,10 +11,11 @@ type MessageType = {
   message: string;
   username: string;
   createdAt: Date;
+  actor?: string;
 };
 
 type MessageProps = {
-  align: 'left' | 'right';
+  align: 'left' | 'right' | 'center';
   message: MessageType;
   secondary?: boolean;
   showTime?: boolean;
@@ -92,14 +93,16 @@ const Message = ({
       value={{ message, secondary, align, showTime }}
     >
       <div
-        onClick={() => setIsClicked((prev) => !prev)}
+        onClick={() => message.actor === 'user' && setIsClicked((prev) => !prev)}
         className={`m-2 flex gap-2 justify-center items-center w-fit ${
-          align === 'left' ? 'mr-auto' : 'ml-auto'
+          align === 'left' ? 'mr-auto' : align === 'right' ? 'ml-auto' : 'mx-auto'
         }`}
       >
         {children}
       </div>
-      <div className={`${ align === 'left' ? 'text-left ml-12' : 'text-right mr-12' }`}>
+      <div className={`${
+        align === 'left' ? 'text-left ml-12' : align === 'right' ? 'text-right mr-12' : 'mx-auto'
+      }`}>
         {showTime && isClicked && <Timestamp />}
       </div>
     </MessageContext.Provider>

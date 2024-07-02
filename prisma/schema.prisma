@@ -17,6 +17,7 @@ model User {
   id    Int @id @default(autoincrement())
   name  String
   email String
+  image String?
 
   conversations ConversationUser[]
   messages Message[]
@@ -24,14 +25,12 @@ model User {
   friendOf Friendship[] @relation("UserFriendOf")
 }
 
-enum ConversationType {
-  personal
-  group
-}
-
 model Conversation {
   id        Int    @id @default(autoincrement())
   conversation_type ConversationType @default(personal)
+  name      String?
+  image     String?
+  description String?
   created_at DateTime @default(now())
 
   users ConversationUser[]
@@ -51,6 +50,8 @@ model ConversationUser {
 model Message {
   id        Int    @id @default(autoincrement())
   text      String
+  message_type MessageType @default(text)
+  message_actor_type MessageActorType @default(user)
   created_at DateTime @default(now())
   user_id   Int
   conversation_id Int
@@ -73,6 +74,22 @@ model Friendship {
   @@unique([user_id, friend_id])
   @@index([user_id])
   @@index([friend_id])
+}
+
+enum ConversationType {
+  personal
+  group
+}
+
+enum MessageType {
+  text
+  image
+}
+
+enum MessageActorType {
+  user
+  system
+  bot
 }
 
 enum FriendshipStatus {

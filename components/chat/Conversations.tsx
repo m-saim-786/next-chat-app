@@ -1,7 +1,7 @@
 'use client'
 import { Card, CardHeader } from '../ui/card'
 import Conversation from './Conversation'
-import { PencilIcon } from 'lucide-react'
+import { UserRound, UsersRound } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import useConversations from '@/hooks/useConversations'
@@ -15,11 +15,18 @@ const Conversations = () => {
     <Card className="w-[30rem] rounded-none">
       <CardHeader className="bg-slate-100 flex flex-row justify-between align-bottom">
         <span>Conversations</span>
-        <PencilIcon
-          size={16}
-          className="cursor-pointer hover:text-slate-500"
-          onClick={() => router.push('/chat/new')}
-        />
+        <div className='flex items-center justify-between w-12'>
+          <UserRound
+            size={16}
+            className="cursor-pointer hover:text-slate-500"
+            onClick={() => router.push('/chat/new/chat')}
+          />
+          <UsersRound
+            size={16}
+            className="cursor-pointer hover:text-slate-500"
+            onClick={() => router.push('/chat/new/group')}
+          />
+        </div>
       </CardHeader>
       {conversations.map((conversation) => (
         <Conversation

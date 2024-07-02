@@ -13,7 +13,6 @@ export const GET = async (
 
   const conversations = await prisma.conversation.findMany({
     where: {
-      conversation_type: 'personal',
       users: {
         some: {
           user_id: +id,
@@ -27,8 +26,7 @@ export const GET = async (
 
   const result = conversations.map((conversation) => ({
     id: conversation.id,
-    title: conversation.users.find((user) => user.user.id !== +id)?.user
-      .name,
+    title: conversation.conversation_type === 'personal' ? conversation.users.find((user) => user.user.id !== +id)?.user.name : conversation.name,
   }))
 
   return Response.json({ conversations: result })
