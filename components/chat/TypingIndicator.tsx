@@ -1,4 +1,4 @@
-import TypingAnimation from "@/components/ui/typingAnimation";
+import TypingAnimation from '@/components/ui/typingAnimation'
 
 const TypingIndicator = () => {
   return (

@@ -1,4 +1,4 @@
-import Conversations from "@/components/chat/Conversations";
+import Conversations from '@/components/chat/Conversations'
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   return (
@@ -8,7 +8,7 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
         {children}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default layout;
+export default layout
