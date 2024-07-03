@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest, { params }: { params: { id: string; requestId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string; requestId: string } }) {
   const { id, requestId } = params
   const userId = parseInt(id, 10)
   const friendRequestId = parseInt(requestId, 10)

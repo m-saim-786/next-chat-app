@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useAuth } from '@/hooks/useAuth'
 import { socket } from '@/socket'
+import { useRouter } from 'next/navigation'
 import { Message as MessageSchema } from '@prisma/client'
 
 import Message, { MessageContent, Username } from '@/components/chat/message'
@@ -28,6 +29,7 @@ const Chat = ({ messages, users, roomId, conversationName }: ChatProps) => {
   const [messageList, setMessageList] = useState<MessageData[]>(messages)
   const { user } = useAuth()
   const { toast } = useToast()
+  const router = useRouter()
   
   const messageSound = new Audio('/message.mp3')
   const messagesRef = useRef<HTMLDivElement>(null)
@@ -138,7 +140,7 @@ const Chat = ({ messages, users, roomId, conversationName }: ChatProps) => {
   return (
     <div className="flex flex-col h-full w-full">
       <header className="p-4 bg-slate-100 justify-between flex">
-        <h1>{ conversationName || users.find((u) => u.id !== user?.id)?.title}</h1>
+        <h1 className='cursor-pointer' onClick={() => conversationName && router.push(`/chat/${roomId}/details`)}>{ conversationName || users.find((u) => u.id !== user?.id)?.title}</h1>
       </header>
 
       <div className="flex-grow overflow-y-auto p-5" ref={messagesRef}>
