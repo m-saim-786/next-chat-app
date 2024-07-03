@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 export const POST = async (request: Request) => {
   try {
     const body = await request.json()
-    const { userIds, creatorId, name, description } = body
+    const { userIds, creatorId, name, description }: { userIds: number[]; creatorId: number; name: string; description: string } = body
 
     if (!userIds || !creatorId || !name || !description) {
       return new Response('Invalid request', { status: 400 })
@@ -29,8 +29,12 @@ export const POST = async (request: Request) => {
       },
     })
 
+    await prisma.conversationUser.create({
+      data: { user_id: creatorId, conversation_id: conversation.id, user_role: 'admin' }
+    })
+
     await prisma.conversationUser.createMany({
-      data: [...userIds, creatorId].map(userId => ({ user_id: userId, conversation_id: conversation.id }))
+      data: userIds.map(userId => ({ user_id: userId, conversation_id: conversation.id }))
     })
 
     await prisma.message.create({
